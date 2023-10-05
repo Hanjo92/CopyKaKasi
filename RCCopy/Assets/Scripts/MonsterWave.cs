@@ -30,7 +30,7 @@ public class MonsterWave : MonoBehaviour
 
 		foreach(var unit in unitPositions)
         {
-            var monsterPrefab = Resources.Load<Monster>($"Prefabs/{unit.prefabName}");
+            var monsterPrefab = Resources.Load<Monster>(unit.prefabName.PrefabPath());
             if(monsterPrefab == null )
             {
                 Debug.LogWarning($"Prefab not found :: {unit.prefabName}");
@@ -48,6 +48,14 @@ public class MonsterWave : MonoBehaviour
     {
         aliveMonsterCount--;
 	}
+
+    public void MonsterClear()
+    {
+        foreach(var monster in monsters)
+        {
+            monster.Release();
+        }
+    }
 
 	private void OnDrawGizmos()
 	{

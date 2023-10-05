@@ -15,7 +15,7 @@ public class Monster : MonoBehaviour, IPoolObj
 	public string TemplateKey => monsterName;
     public bool IsAlive => currentHP > 0;
 
-	public void Init()
+	public void Init(object[] param = null)
     {
         transform.rotation = Quaternion.identity;
         onDead = null;
@@ -24,7 +24,7 @@ public class Monster : MonoBehaviour, IPoolObj
 
     public void Release() => SimplePool.Release(this);
 
-    public void SetDemage(float demage)
+    public void Attacked(float demage)
     {
 		currentHP -= demage;
         if(IsAlive == false)
@@ -34,7 +34,6 @@ public class Monster : MonoBehaviour, IPoolObj
 		}
 	}
 
-	// Update is called once per frame
 	void Update()
     {
         transform.position += speed * Time.deltaTime * Vector3.forward;

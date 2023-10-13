@@ -11,6 +11,7 @@ public class GameController : MonoSingleton<GameController>
 
 	[SerializeField] private SkillPanel skillPanel;
 	[SerializeField] private GamePlayUI gamePlayUI;
+	[SerializeField] private NextGameUI nextGameUI;
 
     [SerializeField] private CameraController cameraController;
 	[SerializeField] private Transform weaponPosition;
@@ -24,6 +25,8 @@ public class GameController : MonoSingleton<GameController>
 	private PlayerStatus playerStatus;
 	public float CurrentCastleHP => playerStatus?.GetCurrentHP() ?? 0;
 	public bool PlayerDead => CurrentCastleHP <= 0;
+	public float CoolTimeRatio => weapon != null ? weapon.CoolTimeRatio : 0;
+
 	public Dictionary<SkillType, Skill> SkillSet => playerStatus?.GetSkillSet() ?? null;
 	public void AttackCastle(float demage)
 	{
@@ -33,6 +36,7 @@ public class GameController : MonoSingleton<GameController>
 			return;
 		}
 		playerStatus?.Attacked(demage);
+		gamePlayUI.UpdateCastleHP(CurrentCastleHP);
 	}
 	public void AddSkill(SkillType skill)
 	{
@@ -59,7 +63,9 @@ public class GameController : MonoSingleton<GameController>
 	private void OnApplicationFocus(bool focus)
 	{
 		if(focus == false)
-			Pause();
+		{
+			gamePlayUI.OpenPausedPanel();
+		}
 	}
 	private void OnDestroy()
 	{
@@ -74,7 +80,7 @@ public class GameController : MonoSingleton<GameController>
 	{
 		Debug.Log("Start");
 		cts = new CancellationTokenSource();
-		GameStartTask(cts).Forget();
+		GameStartTask(cts).ContinueWith(() => WaittingNextGame(PlayerDead == false)).Forget();
 	}
 	public void Restart()
 	{
@@ -87,9 +93,21 @@ public class GameController : MonoSingleton<GameController>
 		GameStart();
 	}
 
+	private GameObject castleObj = null;
+
 	private async UniTask GameStartTask(CancellationTokenSource cts)
 	{
-		playerStatus = new PlayerStatus();
+		if(castleObj == null)
+		{
+			var castlePrefab = Resources.Load<GameObject>("Castle".PrefabPath());
+			castleObj = Instantiate(castlePrefab);
+			castleObj.transform.position = Vector3.forward * Defines.CastlePosition;
+		}
+
+		playerStatus ??= new PlayerStatus();
+		playerStatus.Initialize();
+
+
 		var weaponPrefab = Resources.Load<Weapon>(Player.Inst.SampleWeaponName.PrefabPath());
 		weapon = Instantiate(weaponPrefab);
 		weapon.transform.SetParent(weaponPosition, false);
@@ -102,21 +120,43 @@ public class GameController : MonoSingleton<GameController>
 				cameraController.enabled = false;
 				weapon.gameObject.SetActive(false);
 				skillPanel.gameObject.SetActive(true);
-				gamePlayUI.gameObject.SetActive(false);
 				skillPanel.SetSkillUIs();
+
+				gamePlayUI.gameObject.SetActive(false);
+				gamePlayUI.UpdateWaveProgress((waveRound + 1) / (float)monsterWaves.Count);
 				await UniTask.WaitUntil(() => skillPanel.gameObject.activeSelf == false, cancellationToken: cts.Token);
 
 				cameraController.enabled = true;
 				weapon.gameObject.SetActive(true);
 				gamePlayUI.gameObject.SetActive(true);
 				monsterWaves[waveRound].WaveInitialize();
-				await UniTask.WaitUntil(() => monsterWaves[waveRound].WaveEnd, cancellationToken: cts.Token);
+				await UniTask.WaitUntil(() => {
+					if(isPaused == false)
+					{
+						gamePlayUI.UpdateCoolTimeProgress(CoolTimeRatio);
+						weapon.WeaponUpdate(Time.deltaTime);
+						cameraController.CameraViewUpdate();
+
+						monsterWaves[waveRound].UpdateMonsters(Time.deltaTime);
+					}
+
+					return monsterWaves[waveRound].WaveEnd || PlayerDead; }, cancellationToken: cts.Token);
+
+				if(PlayerDead)
+					break;
 			}
 		}
-		catch
+		catch(System.Exception e)
 		{
-			Debug.Log("Cancel");
+			Debug.Log("Cancel" + e.ToString());
 			monsterWaves[waveRound].MonsterClear();
 		}
+	}
+	private async UniTask WaittingNextGame(bool isClear)
+	{
+		nextGameUI.gameObject.SetActive(true);
+		nextGameUI.SetTexts(isClear);
+		await UniTask.WaitUntil(() => nextGameUI.gameObject.activeSelf == false);
+		Restart();
 	}
 }

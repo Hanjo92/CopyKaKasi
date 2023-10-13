@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
 	[SerializeField] private int id;
+	[ReadOnly(true)]public string weaponName;
 	[SerializeField] private float defaultDemage;
 	[SerializeField] private float defaultSpeed;
 	[SerializeField] private Transform firePosition;
@@ -24,11 +26,11 @@ public class Weapon : MonoBehaviour
 		}
 	}
 	private float delay = 0;
-	private bool CanFire => delay > CoolTime;
+	protected bool CanFire => delay > CoolTime;
 	private Dictionary<SkillType, Skill> skillSet;
 	public float CoolTimeRatio => delay / CoolTime;
 
-	private void Update()
+	public void WeaponUpdate(float deltaTime)
 	{
 		if(CanFire)
 		{
@@ -40,7 +42,7 @@ public class Weapon : MonoBehaviour
 		}
 		else
 		{
-			delay += Time.deltaTime;
+			delay += deltaTime;
 		}
 	}
 

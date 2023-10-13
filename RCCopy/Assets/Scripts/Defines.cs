@@ -12,6 +12,8 @@ public static class Defines
 	public const float IncreaseHPAmount = 500;
 	public const int IncreaseLevelCount = 5;
 
+	public const float CastlePosition = 15f;
+
 	public const float DefaultBulletDemage = 5f;
 	public const float DefaultBulletSpeed = 20f;
 

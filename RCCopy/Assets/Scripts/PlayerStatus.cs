@@ -4,12 +4,18 @@ public class PlayerStatus
 {
 	private float currentHP;
 	private Dictionary<SkillType, Skill> skillSet;
-	public PlayerStatus()
+	public void Initialize()
 	{
 		currentHP = Player.Inst.CastleHP;
-		skillSet = new Dictionary<SkillType, Skill>();
+		if(skillSet == null)
+		{
+			skillSet = new Dictionary<SkillType, Skill>();
+		}
+		else
+		{ 
+			skillSet.Clear(); 
+		}
 	}
-
 	public float GetCurrentHP() => currentHP;
 	public void Attacked(float demage) => currentHP -= demage;
 	public Dictionary<SkillType, Skill> GetSkillSet() => skillSet;

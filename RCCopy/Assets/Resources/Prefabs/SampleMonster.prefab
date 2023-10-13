@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 633768071046896875}
   - component: {fileID: 7575324283588590366}
   - component: {fileID: -5121182271793717748}
+  - component: {fileID: 8661887006228415278}
   m_Layer: 30
   m_Name: SampleMonster
   m_TagString: Untagged
@@ -114,3 +115,23 @@ MonoBehaviour:
   speed: 1
   maxHP: 10
   currentHP: 10
+  demage: 50
+  attackRange: 0.5
+  animation: {fileID: 8661887006228415278}
+  coolTime: 0.5
+--- !u!111 &8661887006228415278
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5234172563245763521}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: c5228d2956932ff4b8ad3240a4886097, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: c5228d2956932ff4b8ad3240a4886097, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0

@@ -57,6 +57,14 @@ public class MonsterWave : MonoBehaviour
         }
     }
 
+    public void UpdateMonsters(float deltaTime)
+    {
+		foreach(var monster in monsters)
+		{
+			monster.MonsterUpdate(deltaTime);
+		}
+	}
+
 	private void OnDrawGizmos()
 	{
 		foreach (var unit in unitPositions)

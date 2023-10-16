@@ -11,7 +11,7 @@ public class CameraController : MonoBehaviour
 		targetCamera ??= Camera.main;
 	}
 
-	private void Update()
+	public void CameraViewUpdate()
 	{
 		if(targetCamera == null)
 			return;

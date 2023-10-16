@@ -4,12 +4,30 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour, IPoolObj
 {
-    [SerializeField] private float speed = 2f;
-	[SerializeField] private float demage = 5f;
+	[SerializeField] private LayerMask targetLayer;
+    private float speed;
+	private float demage;
 
 	public string TemplateKey => "CrossbowBasicArrow";
 
-	public void Init() {}
+	private Dictionary<SkillType, Skill> skillSet;
+
+	private bool IsPenetrate => skillSet?.ContainsKey(SkillType.Penetrate) ?? false;
+
+	public void Init(object[] param = null)
+	{
+		if(param != null && param.Length >= 3)
+		{
+			demage = (float)param[0];
+			speed = (float)param[1];
+			skillSet = (Dictionary<SkillType, Skill>)param[2];
+		}
+		else
+		{
+			demage = Defines.DefaultBulletDemage;
+			speed = Defines.DefaultBulletSpeed;
+		}
+	}
 
 	public void Release() => SimplePool.Release(this);
 
@@ -20,7 +38,7 @@ public class Bullet : MonoBehaviour, IPoolObj
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if(other.gameObject.layer == LayerMask.NameToLayer("Monster"))
+		if((1 << other.gameObject.layer & targetLayer.value) > 0)
 		{
 			if(!other.gameObject.TryGetComponent<Monster>(out var monster))
 				return;
@@ -28,15 +46,16 @@ public class Bullet : MonoBehaviour, IPoolObj
 			if(monster.IsAlive)
 			{
 				// 몬스터에 충돌 데미지를 준다.
-				monster.SetDemage(demage);
-				Release();
+				monster.Attacked(demage);
+				if(IsPenetrate == false)
+					Release();
 			}
 			else
 			{
 				return;
 			}
 		}
-		else if(other.gameObject.layer == LayerMask.NameToLayer("Map"))
+		if(other.gameObject.layer == LayerMask.NameToLayer("Map"))
 		{
 			// 맵에 충돌
 			Release();

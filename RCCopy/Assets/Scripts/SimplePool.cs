@@ -6,7 +6,7 @@ using UnityEngine;
 public interface IPoolObj
 {
 	string TemplateKey {  get; }
-	void Init();
+	void Init(object[] param = null);
     void Release();
 }
 
@@ -14,32 +14,38 @@ public class SimplePool
 {
     public static Dictionary<string, Queue<MonoBehaviour>> poolDictionary = new Dictionary<string, Queue<MonoBehaviour>>();
 
-    public static T Instantiate<T>(T template) where T : MonoBehaviour, IPoolObj
+    public static T Instantiate<T>(T template, object[] param = null) where T : MonoBehaviour, IPoolObj
 	{
 		var key = template.TemplateKey;
 		if(string.IsNullOrEmpty(key))
 		{
 			key = template.gameObject.name.ToString();
 		}
-		var pooledObj = GetPooledObject<T>(key);
-		if(pooledObj != null) return pooledObj;
+		var pooledObj = GetPooledObject<T>(key, param);
+		if(pooledObj == null)
+		{
+			pooledObj = Object.Instantiate(template);
+			pooledObj.Init(param);
+		}
 
-		return Object.Instantiate(template);
+		return pooledObj;
 	}
 
-	public static T InstantiatePrimitive<T>(PrimitiveType primitiveType, string key) where T : MonoBehaviour, IPoolObj
+	public static T InstantiatePrimitive<T>(PrimitiveType primitiveType, string key, object[] param = null) where T : MonoBehaviour, IPoolObj
 	{
 		var primitiveName = primitiveType.ToString() + key;
-		var pooledObj = GetPooledObject<T>(primitiveName);
+		var pooledObj = GetPooledObject<T>(primitiveName, param);
 		if(pooledObj != null)
 			return pooledObj;
 
 		var gameObject = GameObject.CreatePrimitive(primitiveType);
 		gameObject.name = primitiveName;
-		return gameObject.AddComponent<T>();
+		var t = gameObject.AddComponent<T>();
+		t.Init(param);
+		return t;
 	}
 
-	private static T GetPooledObject<T>(string key) where T : MonoBehaviour, IPoolObj
+	private static T GetPooledObject<T>(string key, object[] param) where T : MonoBehaviour, IPoolObj
 	{
 		var hasPool = poolDictionary.TryGetValue(key, out var pool);
 		if(hasPool)
@@ -48,7 +54,7 @@ public class SimplePool
 			{
 				var obj = (T)pool.Dequeue();
 				obj.gameObject.SetActive(true);
-				obj.Init();
+				obj.Init(param);
 				return obj;
 			}
 		}

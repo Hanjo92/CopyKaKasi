@@ -100,6 +100,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 15
   demage: 20
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 1073741824
 --- !u!65 &4128564801720542326
 BoxCollider:
   m_ObjectHideFlags: 0

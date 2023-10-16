@@ -30,7 +30,7 @@ public class MonsterWave : MonoBehaviour
 
 		foreach(var unit in unitPositions)
         {
-            var monsterPrefab = Resources.Load<Monster>($"Prefabs/{unit.prefabName}");
+            var monsterPrefab = Resources.Load<Monster>(unit.prefabName.PrefabPath());
             if(monsterPrefab == null )
             {
                 Debug.LogWarning($"Prefab not found :: {unit.prefabName}");
@@ -49,7 +49,24 @@ public class MonsterWave : MonoBehaviour
         aliveMonsterCount--;
 	}
 
-	private void OnDrawGizmos()
+    public void MonsterClear()
+    {
+        foreach(var monster in monsters)
+        {
+            monster.Release();
+        }
+    }
+
+    public void UpdateMonsters(float deltaTime)
+    {
+		foreach(var monster in monsters)
+		{
+			monster.MonsterUpdate(deltaTime);
+		}
+	}
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
 	{
 		foreach (var unit in unitPositions)
         {
@@ -60,4 +77,5 @@ public class MonsterWave : MonoBehaviour
             Handles.Label(position, unit.prefabName);
         }
 	}
+#endif
 }

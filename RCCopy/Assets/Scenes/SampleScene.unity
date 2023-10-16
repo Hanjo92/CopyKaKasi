@@ -377,7 +377,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillPanel: {fileID: 1801281079}
   gamePlayUI: {fileID: 670239053}
-  nextGameUI: {fileID: 0}
+  nextGameUI: {fileID: 1861350194}
   cameraController: {fileID: 963194230}
   weaponPosition: {fileID: 1652124513}
   monsterWaves:
@@ -4465,7 +4465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1861350193
 RectTransform:
   m_ObjectHideFlags: 0

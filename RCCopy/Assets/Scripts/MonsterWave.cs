@@ -65,7 +65,8 @@ public class MonsterWave : MonoBehaviour
 		}
 	}
 
-	private void OnDrawGizmos()
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
 	{
 		foreach (var unit in unitPositions)
         {
@@ -76,4 +77,5 @@ public class MonsterWave : MonoBehaviour
             Handles.Label(position, unit.prefabName);
         }
 	}
+#endif
 }

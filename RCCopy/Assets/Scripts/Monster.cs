@@ -5,16 +5,27 @@ using UnityEngine;
 
 public class Monster : MonoBehaviour, IPoolObj
 {
-    [SerializeField] private string monsterName;
+    protected const string MonsterUIPrefabName = "MonsterUI";
+    protected static MonsterUI MonsterUIPrefab = null;
+
+	[SerializeField] private string monsterName;
     
     [SerializeField] private float speed = 1f;
-	[SerializeField] private float maxHP = 10;
-	[SerializeField] private float currentHP = 10;
+	
+    [SerializeField] private float maxHP = 10;
+	private float currentHP = 10;
+
     [SerializeField] private float demage = 50f;
     [SerializeField] private float attackRange = 0.5f;
-    [SerializeField] private new Animation animation;
+    
     [SerializeField] private float coolTime = 0.5f;
 	private float delay = 0;
+
+    [SerializeField] private new Animation animation;
+
+    [SerializeField] private Transform monsterUIPosition;
+
+	private MonsterUI monsterUI;
 
 	public Action<Monster> onDead = null;
 	public string TemplateKey => monsterName;
@@ -24,15 +35,37 @@ public class Monster : MonoBehaviour, IPoolObj
     {
         transform.rotation = Quaternion.identity;
         onDead = null;
-        currentHP = 10;
+        currentHP = maxHP;
+
+		MonsterUIPrefab = MonsterUIPrefab != null ? MonsterUIPrefab : Resources.Load<MonsterUI>(MonsterUIPrefabName.PrefabPath());
+
+        if(MonsterUIPrefab == null)
+        {
+            Debug.LogWarning("UI prefab not found");
+            return;
+        }
+        monsterUI = SimplePool.Instantiate(MonsterUIPrefab, new object[] { monsterUIPosition, monsterName });
 	}
 
-    public void Release() => SimplePool.Release(this);
+    public void Release()
+    {
+        if(monsterUI)
+        {
+			monsterUI.Release();
+		}
+
+		SimplePool.Release(this);
+	}
 
     public void Attacked(float demage)
     {
 		currentHP -= demage;
-        if(IsAlive == false)
+		if(monsterUI)
+		{
+			monsterUI.UpdateSlider(currentHP / maxHP);
+		}
+
+		if(IsAlive == false)
         {
 			onDead?.Invoke(this);
             Release();

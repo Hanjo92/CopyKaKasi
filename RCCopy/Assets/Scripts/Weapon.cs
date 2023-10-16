@@ -12,6 +12,7 @@ public class Weapon : MonoBehaviour
 	[SerializeField] private Transform firePosition;
 	[SerializeField] private Bullet bulletPrefab;
 	[SerializeField] private float coolTime = 0.5f;
+
 	private float CoolTime
 	{
 		get
@@ -27,8 +28,10 @@ public class Weapon : MonoBehaviour
 	}
 	private float delay = 0;
 	protected bool CanFire => delay > CoolTime;
-	private Dictionary<SkillType, Skill> skillSet;
+	private Dictionary<SkillType, Skill> skillSet = new Dictionary<SkillType, Skill>();
 	public float CoolTimeRatio => delay / CoolTime;
+	private int BulletCount => skillSet.TryGetValue(SkillType.AddBullet, out var skill) ? skill.Stack + 1 : 1;
+	private float[] firePositions;
 
 	public void WeaponUpdate(float deltaTime)
 	{
@@ -64,9 +67,20 @@ public class Weapon : MonoBehaviour
 			speed *= 1 + spd?.Value ?? 0;
 		}
 
-		var bullet = SimplePool.Instantiate(bulletPrefab, new object[]{demage, speed, skillSet});
-		var fireTransform = firePosition == null ? transform : firePosition;
-		bullet.transform.SetPositionAndRotation(fireTransform.position, fireTransform.rotation);
+		if(firePositions == null || firePositions.Length != BulletCount)
+		{
+			firePositions = new float[BulletCount];
+			Util.CalcLayoutPositions(firePositions, BulletCount, Defines.BulletInterval);
+		}
+
+		for(int i = 0; i < firePositions.Length; i++)
+		{
+			var bullet = SimplePool.Instantiate(bulletPrefab, new object[] { demage, speed, skillSet });
+			var fireTransform = firePosition == null ? transform : firePosition;
+			var bulletPositoin = fireTransform.position + fireTransform.right * firePositions[i];
+
+			bullet.transform.SetPositionAndRotation(bulletPositoin, fireTransform.rotation);
+		}
 	}
 	public void SetSkills(Dictionary<SkillType, Skill> _skillSet) => skillSet = _skillSet;
 }

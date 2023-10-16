@@ -16,6 +16,8 @@ public static class Defines
 
 	public const float DefaultBulletDemage = 5f;
 	public const float DefaultBulletSpeed = 20f;
+	public const float BulletInterval = 0.05f;
+
 
 	public const float MinimumCooltime = 0.05f;
 

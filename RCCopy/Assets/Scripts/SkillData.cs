@@ -8,7 +8,7 @@ public class Skill
 {
 	public SkillType Type => data.skillType;
 	public float Value => data.value * skillStack;
-
+	public int Stack => skillStack;
 	public Skill(SkillData skillData)
 	{
 		data = skillData;

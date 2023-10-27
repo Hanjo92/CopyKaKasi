@@ -19,7 +19,7 @@ public class ReplayUI : MonoBehaviour
 	}
 	private void OnEnable()
 	{
-		highScore.text = PlayerPrefs.GetInt("SavedHighScore", 0).ToString();
+		highScore.text = GameController.Instance.HighestScore.ToString();
 		currentScore.text = GameController.Instance.CurrentScore.ToString();
 	}
 }

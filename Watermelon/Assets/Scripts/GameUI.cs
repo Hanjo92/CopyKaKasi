@@ -14,7 +14,7 @@ public class GameUI : MonoBehaviour
 
 	private void Start()
 	{
-		savedHighScore = PlayerPrefs.GetInt("SavedHighScore", 0);
+		savedHighScore = PlayerPrefs.GetInt(Defines.HighestScoreKey, 0);
 		highestScore.text = savedHighScore.ToString();
 		currentScore.text = "0";
 	}

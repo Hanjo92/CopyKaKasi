@@ -34,7 +34,7 @@ public class GameController : MonoSingleton<GameController>
 	public void GameStart() => PlayGame().ContinueWith(() => WaittingNextGame()).Forget();
     private async UniTask PlayGame()
     {
-		highestScore = PlayerPrefs.GetInt("SavedHighScore", 0);
+		highestScore = PlayerPrefs.GetInt(Defines.HighestScoreKey, 0);
 		gameData = new GameData();
         await guideUI.SetupUI();
 		SetNextLevel(0);
@@ -62,7 +62,7 @@ public class GameController : MonoSingleton<GameController>
 
         gameEnd = true;
         if(gameData.Score > HighestScore)
-            PlayerPrefs.SetInt("SavedHighScore", gameData.Score);
+            PlayerPrefs.SetInt(Defines.HighestScoreKey, gameData.Score);
 	}
 	private async UniTask WaittingNextGame()
 	{

@@ -1,5 +1,4 @@
 # 🐱‍👤카피닌자 카카시🐱‍👤
-카피닌자 카카시
 
 ## Watermelon Game
 ![image](https://github.com/Hanjo92/CopyKaKasi/assets/26320361/d05df257-37ec-4dbb-a525-73cb264a29af)

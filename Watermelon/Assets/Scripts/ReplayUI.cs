@@ -4,22 +4,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ReplayUI : MonoBehaviour
+namespace Watermelon
 {
-    [SerializeField] private TextMeshProUGUI highScore;
-	[SerializeField] private TextMeshProUGUI currentScore;
-	[SerializeField] private Button replayButton;
+	public class ReplayUI : MonoBehaviour
+	{
+		[SerializeField] private TextMeshProUGUI highScore;
+		[SerializeField] private TextMeshProUGUI currentScore;
+		[SerializeField] private Button replayButton;
 
-	private void Awake()
-	{
-		replayButton.onClick.AddListener(() =>
+		private void Awake()
 		{
-			gameObject.SetActive(false);
-		});
-	}
-	private void OnEnable()
-	{
-		highScore.text = GameController.Instance.HighestScore.ToString();
-		currentScore.text = GameController.Instance.CurrentScore.ToString();
+			replayButton.onClick.AddListener(() =>
+			{
+				gameObject.SetActive(false);
+			});
+		}
+		private void OnEnable()
+		{
+			highScore.text = GameController.Instance.HighestScore.ToString();
+			currentScore.text = GameController.Instance.CurrentScore.ToString();
+		}
 	}
 }

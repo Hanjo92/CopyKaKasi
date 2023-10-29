@@ -19,17 +19,11 @@ public class DeadLine : MonoBehaviour
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if(collision.gameObject.layer == LayerMask.NameToLayer("Fruit"))
-		{
-			enterCount++;
-		}
+		if(collision.gameObject.layer == LayerMask.NameToLayer("Fruit")) enterCount++;
 	}
 	private void OnTriggerExit2D(Collider2D collision)
 	{
-		if(collision.gameObject.layer == LayerMask.NameToLayer("Fruit"))
-		{
-			enterCount--;
-		}
+		if(collision.gameObject.layer == LayerMask.NameToLayer("Fruit")) enterCount--;
 	}
 
 	private void Update()

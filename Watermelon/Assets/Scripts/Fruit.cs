@@ -17,8 +17,6 @@ namespace Watermelon
 		private CircleCollider2D circleCollider;
 		private new Rigidbody2D rigidbody2D;
 
-		[SerializeField]private SpriteRenderer faceRenderer;
-
 		private void Awake()
 		{
 			spriteRenderer = GetComponent<SpriteRenderer>();
@@ -84,7 +82,6 @@ namespace Watermelon
 				return;
 
 			// merge
-
 			GameController.Instance.Merge(this, otherFruit);
 		}
 	}

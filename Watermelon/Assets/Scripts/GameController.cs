@@ -37,17 +37,13 @@ public class GameController : MonoSingleton<GameController>
 		highestScore = PlayerPrefs.GetInt(Defines.HighestScoreKey, 0);
 		gameData = new GameData();
         await guideUI.SetupUI();
-		SetNextLevel(0);
+		SetNextFruitLevel(0);
 		current = SimplePool.Instantiate(fruitPrefab, new object[] { nextLevel });
 		current.Hanging(dropPosition);
 		gameEnd = false;
 		//Play Game
-		while (gameEnd == false)
-        {
-            await UniTask.Yield();
-        }
+		await UniTask.WaitUntil(()=>gameEnd);
 		// direction
-
 		var activefruits = FindObjectsOfType<Fruit>().Where((f)=>f.gameObject.activeSelf);
 		foreach (var fruit in activefruits)
 		{
@@ -57,8 +53,7 @@ public class GameController : MonoSingleton<GameController>
 	}
     public void GameEnd()
     {
-		if(gameEnd)
-			return;
+		if(gameEnd)	return;
 
         gameEnd = true;
         if(gameData.Score > HighestScore)
@@ -70,26 +65,24 @@ public class GameController : MonoSingleton<GameController>
 		await UniTask.WaitUntil(() => replayPopup.gameObject.activeSelf == false);
 		GameStart();
 	}
-	private void SetNextLevel(int next)
+	private void SetNextFruitLevel(int next)
 	{
 		nextLevel = next;
 		gameUI.SetNextFruit(nextLevel);
 	}
-	public void Move(float xPos)
+	public bool Move(float xPos)
 	{
-        if(gameEnd) return;
+        if(gameEnd) return false;
 
 		var movePoint = dropPosition.position;
 		movePoint.x = Mathf.Clamp(xPos, Defines.DropRange.x, Defines.DropRange.y);
 		dropPosition.position = movePoint;
+		return true;
 	}
 	public void Drop(float xPos)
     {
-		if(gameEnd)	return;
-
-		var movePoint = dropPosition.position;
-        movePoint.x = Mathf.Clamp(xPos, Defines.DropRange.x, Defines.DropRange.y);
-		dropPosition.position = movePoint;
+		if(Move(xPos) == false)
+			return;
 
         // ´ÙÀ½²¨ ¹× ÇöÀç²¨ °»½Å
         current.transform.SetParent(null);
@@ -97,7 +90,7 @@ public class GameController : MonoSingleton<GameController>
 		current = SimplePool.Instantiate(fruitPrefab, new object[]{ nextLevel });
         current.Hanging(dropPosition);
 
-        SetNextLevel(gameData.GetRandomLevel());
+        SetNextFruitLevel(gameData.GetRandomLevel());
     }
     public void Merge(Fruit fruit1, Fruit fruit2)
     {
@@ -106,7 +99,7 @@ public class GameController : MonoSingleton<GameController>
 		var mergeLevel = fruit1.Level + 1;
 
 		gameData.AddScore(fruit1.Level);
-        gameUI.SetScoreText(gameData.Score);
+        gameUI.SetScoreText(CurrentScore);
 
         var position = Vector3.Lerp(fruit1.transform.position, fruit2.transform.position, 0.5f);
         SimplePool.Release(fruit1);

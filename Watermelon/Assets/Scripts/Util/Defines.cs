@@ -21,7 +21,7 @@ public static class Defines
 
 public static class FruitColor
 {
-	private static string[] colors =
+	private static string[] Colors =
 	{
 		"FB3A22",
 		"F86D4A",
@@ -35,12 +35,11 @@ public static class FruitColor
 		"8ACF18",
 		"0E680C",
 	};
-
-	public static Color GetColor(int level) => colors == null ? Color.white : Util.HexToColor(colors[level % colors.Length]);
+	public static Color GetColor(int level) => Colors == null ? Color.white : Util.HexToColor(Colors[level % Colors.Length]);
 }
 public static class FruitName
 {
-	private static string[] colors =
+	private static string[] Names =
 	{
 		"Cherry",
 		"Strawberry",
@@ -54,6 +53,5 @@ public static class FruitName
 		"Melon",
 		"Watermelon",
 	};
-
-	public static string GetName(int level) => colors == null ? "" : colors[level % colors.Length];
+	public static string GetName(int level) => Names == null ? "" : Names[level % Names.Length];
 }

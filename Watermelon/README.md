@@ -1,11 +1,9 @@
-# CopyKaKasi
+# 🐱‍👤카피닌자 카카시🐱‍👤
 카피닌자 카카시
 
-간단한 게임 카피 업로드 및 웹 빌드 플레이
+## Watermelon Game
+![image](https://github.com/Hanjo92/CopyKaKasi/assets/26320361/d05df257-37ec-4dbb-a525-73cb264a29af)
 
-#1 Royal Castle!
+[플레이 링크!](https://hanjo92.github.io/CopyKaKasi/Build/Watermelon/)
 
-[플레이 링크!](https://hanjo92.github.io/CopyKaKasi/Build/RCC/)
-
-- 화살을 발사하며 몬스터 웨이브를 막는 게임
-- 라운드마다 스킬 선택
+- 과일을 떨어트려 합치는 게임

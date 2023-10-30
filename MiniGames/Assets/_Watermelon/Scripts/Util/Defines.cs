@@ -35,7 +35,7 @@ namespace Watermelon
 			"8ACF18",
 			"0E680C",
 		};
-		public static Color GetColor(int level) => Colors == null ? Color.white : Util.HexToColor(Colors[level % Colors.Length]);
+		public static Color GetColor(int level) => Colors == null ? Color.white : Almond.Util.HexToColor(Colors[level % Colors.Length]);
 	}
 	public static class FruitName
 	{
